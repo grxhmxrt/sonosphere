@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,6 +96,9 @@
             color: #666;
             margin-top: 20px;
         }
+        #managementOutput {
+            color: #c0392b;
+        }
     </style>
 </head>
 <body onload="resetForm()">
@@ -173,7 +175,7 @@
             <tr>
                 <td>Liver Visualisation</td>
                 <td>
-                    <select id="liverVis" aria-label="Liver Visualisation">
+                    <select id="liverVis" aria-label="Liver Visualisation" onchange="updateManagement()">
                         <option value="">Select...</option>
                         <option value="VIS-A">VIS-A</option>
                         <option value="VIS-B">VIS-B</option>
@@ -184,7 +186,7 @@
             <tr>
                 <td>Liver Lesion(s)</td>
                 <td>
-                    <select id="liverLesion" aria-label="Liver Lesions">
+                    <select id="liverLesion" aria-label="Liver Lesions" onchange="updateManagement()">
                         <option value="">Select...</option>
                         <option value="US-1">US-1</option>
                         <option value="US-2">US-2</option>
@@ -192,8 +194,25 @@
                     </select>
                 </td>
             </tr>
+            <!-- AFP row – changed to "Unknown" -->
+            <tr>
+                <td>AFP Result</td>
+                <td>
+                    <select id="afp" onchange="updateManagement()">
+                        <option value="">Select...</option>
+                        <option value="negative">≤20 ng/mL (negative)</option>
+                        <option value="positive">>20 ng/mL (positive)</option>
+                        <option value="unknown">Unknown</option>
+                    </select>
+                </td>
+            </tr>
+            <!-- MANAGEMENT ROW -->
+            <tr style="background:#fff2f0;">
+                <td>Management (per LI-RADS v2024)</td>
+                <td id="managementOutput">Please select Liver Visualisation and Liver Lesion(s) above.</td>
+            </tr>
         </table>
-        <div class="copyright">&copy; 2025 Graham Martin</div>
+        <div class="copyright">© 2025 Graham Martin</div>
     </div>
 
     <script>
@@ -201,6 +220,42 @@
             document.querySelectorAll('input, select').forEach(element => {
                 element.value = '';
             });
+            updateManagement();
+        }
+
+        function updateManagement() {
+            const vis = document.getElementById('liverVis').value;
+            const lesion = document.getElementById('liverLesion').value;
+            const afp = document.getElementById('afp').value;
+            let management = '';
+
+            if (!vis || !lesion) {
+                management = 'Please select Liver Visualisation and Liver Lesion(s) above.';
+            }
+            // AFP >20 overrides everything except US-3
+            else if (afp === 'positive' && lesion !== 'US-3') {
+                management = 'AFP >20 ng/mL → Multiphase CT or MRI recommended (regardless of US category)';
+            }
+            else if (lesion === 'US-3') {
+                management = 'US-3 Positive → Multiphase CT or MRI within 1 month';
+            }
+            else if (lesion === 'US-2' && vis === 'VIS-A') {
+                management = 'US-2 Subthreshold + VIS-A → Repeat ultrasound in 3–6 months';
+            }
+            else if (lesion === 'US-2' && (vis === 'VIS-B' || vis === 'VIS-C')) {
+                management = 'US-2 Subthreshold + VIS-B or VIS-C → Multiphase CT or MRI recommended';
+            }
+            else if (lesion === 'US-1' && vis === 'VIS-A') {
+                management = 'US-1 Negative + VIS-A → Continue routine surveillance every 6 months';
+            }
+            else if (lesion === 'US-1' && vis === 'VIS-B') {
+                management = 'US-1 Negative + VIS-B → Continue routine surveillance every 6 months (moderate limitations noted)';
+            }
+            else if (lesion === 'US-1' && vis === 'VIS-C') {
+                management = 'US-1 Negative + VIS-C → Alternative imaging (CT/MRI) every 6 months recommended due to severe limitations';
+            }
+
+            document.getElementById('managementOutput').textContent = management;
         }
 
         function copyReport() {
@@ -213,13 +268,16 @@
                 { id: 'paraUmbilical', label: 'Recanalisation of Para-Umbilical Vein' },
                 { id: 'spleenSize', label: 'Spleen Size (cm)' },
                 { id: 'liverVis', label: 'Liver Visualisation' },
-                { id: 'liverLesion', label: 'Liver Lesion(s)' }
+                { id: 'liverLesion', label: 'Liver Lesion(s)' },
+                { id: 'afp', label: 'AFP Result' }
             ];
-
-            const report = fields.reduce((text, { id, label }) => {
-                const value = document.getElementById(id).value || 'Not specified';
-                return `${text}${label}: ${value}\n`;
-            }, 'LI-RADS Ultrasound Report\n\n');
+            let report = 'LI-RADS Ultrasound Report\n\n';
+            fields.forEach(f => {
+                const el = document.getElementById(f.id);
+                const value = el.options ? el.options[el.selectedIndex].text : (el.value || 'Not specified');
+                report += `${f.label}: ${value}\n`;
+            });
+            report += `\nManagement (per LI-RADS v2024): ${document.getElementById('managementOutput').textContent}\n`;
 
             navigator.clipboard.writeText(report)
                 .then(() => alert('Report copied to clipboard!'))
