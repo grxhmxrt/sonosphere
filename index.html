@@ -76,7 +76,7 @@ function updateManagement(){
     if (!vis || !lesion) {
         m = "Please select Liver Visualisation and Liver Lesion(s) above.";
     }
-    // US-3 has absolute priority — overrides AFP Positive and AFP Unknown
+    // US-3 overrides everything
     else if (lesion === "US-3") {
         m = "US-3 Positive → Multiphase CT or MRI within 1 month";
     }
@@ -84,17 +84,21 @@ function updateManagement(){
     else if (afp === "unknown") {
         m = "AFP is unknown, therefore findings based solely on US category and visualisation. Please apply the appropriate next steps for further management per LI-RADS v2024.";
     }
-    // AFP Positive (only applies when not US-3)
+    // AFP Positive (when not US-3)
     else if (afp === "positive") {
         m = "AFP Positive → Multiphase CT or MRI recommended (regardless of US category)";
     }
-    // Normal US categories
+    // US-2 cases
     else if (lesion === "US-2" && vis === "VIS-A") {
         m = "US-2 Subthreshold + VIS-A → Repeat ultrasound in 3–6 months";
     }
-    else if (lesion === "US-2" && (vis === "VIS-B" || vis === "VIS-C")) {
-        m = "US-2 Subthreshold + VIS-B or VIS-C → Multiphase CT or MRI recommended";
+    else if (lesion === "US-2" && vis === "VIS-B") {
+        m = "US-2 Subthreshold + VIS-B → Two short-interval follow-up ultrasound examinations at 3–6 month intervals, then return to routine 6-monthly surveillance if stable";
     }
+    else if (lesion === "US-2" && vis === "VIS-C") {
+        m = "US-2 Subthreshold + VIS-C → Repeat ultrasound within 3 months or proceed directly to alternative imaging (multiphase CT/MRI) due to severe visualisation limitations";
+    }
+    // US-1 cases
     else if (lesion === "US-1" && vis === "VIS-A") {
         m = "US-1 Negative + VIS-A → Continue routine surveillance every 6 months";
     }
