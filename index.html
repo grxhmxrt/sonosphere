@@ -38,7 +38,7 @@
             <option value="">Select...</option>
             <option value="Normal">Normal</option>
             <option value="Steatosis Grade I">Steatosis Grade I</option>
-            <option value="Steatosis Grade II">Steatosis Grade II</option>
+            <option value="Steatosis Grade II">Steostasis Grade II</option>
             <option value="Steatosis Grade III">Steatosis Grade III</option>
             <option value="Coarse">Coarse</option>
             <option value="Lobulated Contour">Lobulated Contour</option>
@@ -76,15 +76,12 @@ function updateManagement(){
     if (!vis || !lesion) {
         m = "Please select Liver Visualisation and Liver Lesion(s) above.";
     }
-    // US-3 overrides everything
     else if (lesion === "US-3") {
         m = "US-3 Positive → Multiphase CT or MRI within 1 month";
     }
-    // AFP Unknown
     else if (afp === "unknown") {
         m = "AFP is unknown, therefore findings based solely on US category and visualisation. Please apply the appropriate next steps for further management per LI-RADS v2024.";
     }
-    // AFP Positive (when not US-3)
     else if (afp === "positive") {
         m = "AFP Positive → Multiphase CT or MRI recommended (regardless of US category)";
     }
@@ -96,7 +93,7 @@ function updateManagement(){
         m = "US-2 Subthreshold + VIS-B → Two short-interval follow-up ultrasound examinations at 3–6 month intervals, then return to routine 6-monthly surveillance if stable";
     }
     else if (lesion === "US-2" && vis === "VIS-C") {
-        m = "US-2 Subthreshold + VIS-C → Repeat ultrasound within 3 months or proceed directly to alternative imaging (multiphase CT/MRI) due to severe visualisation limitations";
+        m = "US-2 Subthreshold + VIS-C → Repeat ultrasound within 3 months or consider alternative surveillance modalities due to severe visualisation limitations";
     }
     // US-1 cases
     else if (lesion === "US-1" && vis === "VIS-A") {
