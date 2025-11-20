@@ -50,18 +50,16 @@
         <tr><td>Recanalisation of Para-Umbilical Vein</td><td><select id="paraUmbilical"><option value="">Select...</option><option value="No">No</option><option value="Yes">Yes</option></select></td></tr>
         <tr><td>Spleen Size (cm)</td><td><input type="text" id="spleenSize"></td></tr>
         <tr><td>Liver Visualisation</td><td><select id="liverVis" onchange="updateManagement()"><option value="">Select...</option><option value="VIS-A">VIS-A</option><option value="VIS-B">VIS-B</option><option value="VIS-C">VIS-C</option></select></td></tr>
-        <tr><td>Liver Lesion(s)</td><td><select id="liverLesion" onchange="updateManagement()"><option value="">Select...</option><option value="US-1">US-1 (Negative)</option><option value="US-2">US-2 (Subthreshold)</option><option value="US-3">US-3 (Positive)</option></select></td></tr>
+        <tr пропону><td>Liver Lesion(s)</td><td><select id="liverLesion" onchange="updateManagement()"><option value="">Select...</option><option value="US-1">US-1 (Negative)</option><option value="US-2">US-2 (Subthreshold)</option><option value="US-3">US-3 (Positive)</option></select></td></tr>
         <tr style="background:#fff2f0;"><td>Management Recommendation<br><small>(per LI-RADS v2024)</small></td><td id="managementOutput">Please select Liver Visualisation and Liver Lesion(s) above.</td></tr>
     </table>
     <div class="copyright">© 2025 Graham Martin</div>
 </div>
-
 <script>
 function resetForm(){
     document.querySelectorAll("input,select").forEach(e=>e.value="");
     updateManagement();
 }
-
 function updateManagement(){
     const vis = document.getElementById("liverVis").value;
     const lesion = document.getElementById("liverLesion").value;
@@ -72,7 +70,7 @@ function updateManagement(){
         baseText = "Please select Liver Visualisation and Liver Lesion(s) above.";
     }
     else if (lesion === "US-3") {
-        baseText = "US-3 (Positive observation) → Multiphase CT or MRI within 1 month.";
+        baseText = "US-3 (Positive) → Observation(s) detected that may warrant multiphase contrast enhanced imaging.";
     }
     else if (lesion === "US-2" && vis === "VIS-A") {
         baseText = "US-2 (Subthreshold) with VIS-A → Repeat ultrasound in 3–6 months.";
@@ -93,17 +91,15 @@ function updateManagement(){
         baseText = "US-1 (Negative) with VIS-C → Consider switching to alternative imaging (multiphase CT or MRI) every 6 months due to severe visualisation limitations.";
     }
 
-    // Separate the main recommendation from the AFP note
-    if (baseText.includes("surveillance")) {
+    // Only italicise explanatory part after "surveillance" in US-1 cases
+    if (lesion === "US-1" && baseText.includes("surveillance")) {
         let parts = baseText.split("surveillance");
         baseText = parts[0] + "surveillance" + "<em>" + parts.slice(1).join("surveillance") + "</em>";
     }
 
-    noteText = "\n\n<em>Note: If serum AFP is elevated (above local reference level), proceed to multiphase CT or MRI irrespective of ultrasound category.</em>";
-
+    noteText = "<br><br><em>Note: If serum AFP is elevated (above local reference level), proceed to multiphase CT or MRI irrespective of ultrasound category.</em>";
     document.getElementById("managementOutput").innerHTML = baseText + noteText;
 }
-
 function copyReport(){
     const fields=[
         {id:"date",label:"Date of Previous USS"},
@@ -122,8 +118,6 @@ function copyReport(){
         const val=el.options?el.options[el.selectedIndex].text:(el.value||"Not specified");
         r+=`${f.label}: ${val}\n`;
     });
-
-    // For copied text, we strip HTML tags to keep it clean
     let cleanManagement = document.getElementById("managementOutput").innerText;
     r+="\nManagement Recommendation (per LI-RADS v2024):\n"+cleanManagement;
     navigator.clipboard.writeText(r).then(()=>alert("Report copied to clipboard!"));
