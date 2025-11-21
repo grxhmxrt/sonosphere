@@ -45,12 +45,21 @@
             <option value="Lobulated Contour">Lobulated Contour</option>
         </select></td></tr>
         <tr><td>Portal Vein Patent</td><td><select id="portalVein"><option value="">Select...</option><option value="Yes">Yes</option><option value="No">No</option><option value="Unable to assess">Unable to assess</option></select></td></tr>
-        <tr><td>PV Velocity (cm/s)</td><td><input type="text" id="pvVelocity"></td></tr>
+        <tr><td>PV Velocity (cm/s)</td><td><input type="text" id="pvVelocity" placeholder="e.g. 22"></td></tr>
+
+        <!-- NEW FIELD ADDED HERE -->
+        <tr><td>Portal Vein Diameter (mm)</td><td><input type="text" id="pvDiameter" placeholder="e.g. 12"></td></tr>
+
         <tr><td>Hepatic Veins Patent</td><td><select id="hepaticVeins"><option value="">Select...</option><option value="Yes">Yes</option><option value="No">No</option><option value="Unable to assess">Unable to assess</option></select></td></tr>
         <tr><td>Recanalisation of Para-Umbilical Vein</td><td><select id="paraUmbilical"><option value="">Select...</option><option value="No">No</option><option value="Yes">Yes</option></select></td></tr>
         <tr><td>Spleen Size (cm)</td><td><input type="text" id="spleenSize"></td></tr>
+        <tr><td>Ascites</td><td><select id="ascites">
+            <option value="">Select...</option>
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+        </select></td></tr>
         <tr><td>Liver Visualisation</td><td><select id="liverVis" onchange="updateManagement()"><option value="">Select...</option><option value="VIS-A">VIS-A</option><option value="VIS-B">VIS-B</option><option value="VIS-C">VIS-C</option></select></td></tr>
-        <tr пропону><td>Liver Lesion(s)</td><td><select id="liverLesion" onchange="updateManagement()"><option value="">Select...</option><option value="US-1">US-1 (Negative)</option><option value="US-2">US-2 (Subthreshold)</option><option value="US-3">US-3 (Positive)</option></select></td></tr>
+        <tr><td>Liver Lesion(s)</td><td><select id="liverLesion" onchange="updateManagement()"><option value="">Select...</option><option value="US-1">US-1 (Negative)</option><option value="US-2">US-2 (Subthreshold)</option><option value="US-3">US-3 (Positive)</option></select></td></tr>
         <tr style="background:#fff2f0;"><td>Management Recommendation<br><small>(per LI-RADS v2024)</small></td><td id="managementOutput">Please select Liver Visualisation and Liver Lesion(s) above.</td></tr>
     </table>
     <div class="copyright">© 2025 Graham Martin</div>
@@ -65,7 +74,6 @@ function updateManagement(){
     const lesion = document.getElementById("liverLesion").value;
     let baseText = "";
     let noteText = "";
-
     if (!vis || !lesion) {
         baseText = "Please select Liver Visualisation and Liver Lesion(s) above.";
     }
@@ -90,13 +98,10 @@ function updateManagement(){
     else if (lesion === "US-1" && vis === "VIS-C") {
         baseText = "US-1 (Negative) with VIS-C → Consider switching to alternative imaging (multiphase CT or MRI) every 6 months due to severe visualisation limitations.";
     }
-
-    // Only italicise explanatory part after "surveillance" in US-1 cases
     if (lesion === "US-1" && baseText.includes("surveillance")) {
         let parts = baseText.split("surveillance");
         baseText = parts[0] + "surveillance" + "<em>" + parts.slice(1).join("surveillance") + "</em>";
     }
-
     noteText = "<br><br><em>Note: If serum AFP is elevated (above local reference level), proceed to multiphase CT or MRI irrespective of ultrasound category.</em>";
     document.getElementById("managementOutput").innerHTML = baseText + noteText;
 }
@@ -106,16 +111,18 @@ function copyReport(){
         {id:"liverDesc",label:"Liver Parenchymal Description"},
         {id:"portalVein",label:"Portal Vein Patent"},
         {id:"pvVelocity",label:"PV Velocity (cm/s)"},
+        {id:"pvDiameter",label:"Portal Vein Diameter (mm)"},   <!-- NEW -->
         {id:"hepaticVeins",label:"Hepatic Veins Patent"},
         {id:"paraUmbilical",label:"Recanalisation of Para-Umbilical Vein"},
         {id:"spleenSize",label:"Spleen Size (cm)"},
+        {id:"ascites",label:"Ascites"},
         {id:"liverVis",label:"Liver Visualisation"},
         {id:"liverLesion",label:"Liver Lesion(s)"}
     ];
     let r="LI-RADS Ultrasound Surveillance Report\n\n";
     fields.forEach(f=>{
         const el=document.getElementById(f.id);
-        const val=el.options?el.options[el.selectedIndex].text:(el.value||"Not specified");
+        const val=el.options ? el.options[el.selectedIndex]?.text || "Not specified" : (el.value || "Not specified");
         r+=`${f.label}: ${val}\n`;
     });
     let cleanManagement = document.getElementById("managementOutput").innerText;
