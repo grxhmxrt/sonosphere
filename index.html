@@ -1,232 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SonoSphere - Ultrasound Reporting Dashboard</title>
-  <style>
-    :root {
-      --primary: #1e40af;
-      --primary-light: #3b82f6;
-      --gray: #64748b;
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SonoSphere — Ultrasound Reporting Dashboard</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --surface2: #1e2333;
+    --border: #2a2f45;
+    --accent: #4a9eff;
+    --accent-dim: rgba(74, 158, 255, 0.12);
+    --accent-glow: rgba(74, 158, 255, 0.25);
+    --text: #e8ecf4;
+    --text-muted: #7a85a0;
+    --text-dim: #4a5270;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
-      min-height: 100vh;
-      color: #1e2937;
-    }
+    --c-lirads:  #fb923c;
+    --c-tirads:  #4a9eff;
+    --c-birads:  #34d399;
+    --c-pirads:  #a78bfa;
+    --c-general: #fbbf24;
+    --c-reports: #7a85a0;
+  }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    header {
-      text-align: center;
-      padding: 40px 20px 30px;
-    }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
 
-    h1 {
-      font-size: 2.8rem;
-      color: var(--primary);
-      margin-bottom: 10px;
-    }
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
 
-    .subtitle {
-      font-size: 1.3rem;
-      color: var(--gray);
-      font-weight: 500;
-    }
+  .header-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
 
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 25px;
-      margin-top: 40px;
-    }
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
 
-    .card {
-      background: white;
-      border-radius: 16px;
-      padding: 30px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-      transition: all 0.3s ease;
-      border: 1px solid #e2e8f0;
-    }
+  .header-text h1 {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
 
-    .card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 35px rgba(30, 64, 175, 0.15);
-    }
+  .header-text p {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
 
-    .card-icon {
-      font-size: 3rem;
-      margin-bottom: 20px;
-    }
+  .header-date {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+  }
 
-    .card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 12px;
-      color: #1e2937;
-    }
+  /* ── MAIN ── */
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
 
-    .card p {
-      color: #64748b;
-      line-height: 1.6;
-      margin-bottom: 25px;
-    }
+  /* ── STATS ROW ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
 
-    .btn {
-      display: inline-block;
-      padding: 12px 28px;
-      background: var(--primary);
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+  }
 
-    .btn:hover {
-      background: var(--primary-light);
-      transform: scale(1.05);
-    }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
 
-    .footer {
-      text-align: center;
-      margin-top: 60px;
-      padding: 30px;
-      color: #64748b;
-      font-size: 0.95rem;
-    }
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
 
-    .header-info {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
+  .stat-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
 
-    .info-item {
-      text-align: center;
-    }
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
 
-    .info-label {
-      font-size: 0.9rem;
-      color: #64748b;
-    }
+  /* ── CARD GRID ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
 
-    .info-value {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #1e2937;
-    }
-  </style>
+  .report-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    border-left: 4px solid transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    cursor: pointer;
+  }
+
+  .report-card:hover {
+    background: var(--surface2);
+    transform: translateY(-1px);
+  }
+
+  .report-card:active { transform: scale(0.99); }
+
+  .report-card.lirads  { border-left-color: var(--c-lirads);  }
+  .report-card.tirads  { border-left-color: var(--c-tirads);  }
+  .report-card.birads  { border-left-color: var(--c-birads);  }
+  .report-card.pirads  { border-left-color: var(--c-pirads);  }
+  .report-card.general { border-left-color: var(--c-general); }
+  .report-card.reports { border-left-color: var(--c-reports); border-left-color: var(--border); }
+
+  .report-card.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .card-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .report-card.lirads  .card-icon { background: rgba(251,146,60,0.12);  }
+  .report-card.tirads  .card-icon { background: rgba(74,158,255,0.12);  }
+  .report-card.birads  .card-icon { background: rgba(52,211,153,0.12);  }
+  .report-card.pirads  .card-icon { background: rgba(167,139,250,0.12); }
+  .report-card.general .card-icon { background: rgba(251,191,36,0.12);  }
+  .report-card.reports .card-icon { background: rgba(122,133,160,0.12); }
+
+  .card-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .report-card.lirads  .card-badge { color: var(--c-lirads);  background: rgba(251,146,60,0.12);  }
+  .report-card.tirads  .card-badge { color: var(--c-tirads);  background: rgba(74,158,255,0.12);  }
+  .report-card.birads  .card-badge { color: var(--c-birads);  background: rgba(52,211,153,0.12);  }
+  .report-card.pirads  .card-badge { color: var(--c-pirads);  background: rgba(167,139,250,0.12); }
+  .report-card.general .card-badge { color: var(--c-general); background: rgba(251,191,36,0.12);  }
+  .report-card.reports .card-badge { color: var(--text-muted); background: rgba(122,133,160,0.12); }
+
+  .card-body {}
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.2px;
+  }
+
+  .card-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .card-action {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  .report-card.lirads  .card-action { color: var(--c-lirads);  }
+  .report-card.tirads  .card-action { color: var(--c-tirads);  }
+  .report-card.birads  .card-action { color: var(--c-birads);  }
+  .report-card.pirads  .card-action { color: var(--c-pirads);  }
+  .report-card.general .card-action { color: var(--c-general); }
+  .report-card.reports .card-action { color: var(--text-muted); }
+
+  .card-arrow {
+    transition: transform 0.15s;
+    font-size: 14px;
+  }
+
+  .report-card:hover .card-arrow { transform: translateX(3px); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 32px 20px 20px;
+    font-size: 12px;
+    color: var(--text-dim);
+    border-top: 1px solid var(--border);
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  footer p + p { margin-top: 4px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 560px) {
+    .card-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .stat-value { font-size: 26px; }
+    .header-date { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <header>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-mark">SS</div>
+    <div class="header-text">
       <h1>SonoSphere</h1>
-      <p class="subtitle">Ultrasound Structured Reporting System</p>
-      
-      <div class="header-info">
-        <div class="info-item">
-          <div class="info-label">Today</div>
-          <div class="info-value" id="current-date"></div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Total Reports</div>
-          <div class="info-value">248</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">This Month</div>
-          <div class="info-value">1,284</div>
-        </div>
-      </div>
-    </header>
-
-    <div class="dashboard">
-
-      <!-- LI-RADS Card -->
-      <div class="card">
-        <div class="card-icon">🟠</div>
-        <h3>LI-RADS</h3>
-        <p>Liver Imaging Reporting and Data System<br>
-        <strong>Hepatocellular Carcinoma (HCC)</strong> risk assessment</p>
-        <a href="https://grxhmxrt.github.io/US-LIRADS/" target="_blank" class="btn">Start LI-RADS Report</a>
-      </div>
-
-      <!-- TI-RADS Card -->
-      <div class="card">
-        <div class="card-icon">🔵</div>
-        <h3>TI-RADS</h3>
-        <p>Thyroid Imaging Reporting and Data System<br>
-        <strong>Thyroid Nodule</strong> risk stratification</p>
-        <a href="https://grxhmxrt.github.io/US-TIRADS/" target="_blank" class="btn">Start TI-RADS Report</a>
-      </div>
-
-      <!-- BI-RADS Card -->
-      <div class="card">
-        <div class="card-icon">🟢</div>
-        <h3>BI-RADS</h3>
-        <p>Breast Imaging Reporting and Data System<br>
-        <strong>Breast Lesion</strong> assessment</p>
-        <a href="#" class="btn" style="background:#16a34a;">Start BI-RADS Report</a>
-      </div>
-
-      <!-- PI-RADS Card -->
-      <div class="card">
-        <div class="card-icon">🟣</div>
-        <h3>PI-RADS</h3>
-        <p>Prostate Imaging Reporting and Data System<br>
-        <strong>Prostate MRI</strong> reporting</p>
-        <a href="#" class="btn" style="background:#8b5cf6;">Start PI-RADS Report</a>
-      </div>
-
-      <!-- General Ultrasound -->
-      <div class="card">
-        <div class="card-icon">🟡</div>
-        <h3>General Ultrasound</h3>
-        <p>Abdominal • Pelvic • Renal • Vascular • Soft Tissue</p>
-        <a href="general.html" class="btn" style="background:#ea580c;">Start General Report</a>
-      </div>
-
-      <!-- All Reports -->
-      <div class="card">
-        <div class="card-icon">📋</div>
-        <h3>All Reports</h3>
-        <p>View, search, and manage all previous sonographic reports</p>
-        <a href="reports.html" class="btn" style="background:#475569;">View All Reports</a>
-      </div>
-
+      <p>Ultrasound Structured Reporting System</p>
     </div>
+    <div class="header-date" id="header-date"></div>
+  </div>
+</header>
 
-    <div class="footer">
-      <p>&copy; 2026 SonoSphere (Graham Martin) • Structured Ultrasound Reporting Platform</p>
-      <p>Designed for efficient, standardised, and reproducible sonographic reporting</p>
+<main>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Today</div>
+      <div class="stat-value">248</div>
+      <div class="stat-sub">Total Reports</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">This Month</div>
+      <div class="stat-value">1,284</div>
+      <div class="stat-sub">Total Reports</div>
     </div>
   </div>
 
-  <script>
-    // Display current date
-    function updateDate() {
-      const dateElement = document.getElementById('current-date');
-      const today = new Date();
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      dateElement.textContent = today.toLocaleDateString('en-US', options);
-    }
+  <!-- Reporting modules -->
+  <div class="section-label">Reporting Modules</div>
 
-    window.onload = updateDate;
-  </script>
+  <div class="card-grid">
+
+    <a class="report-card lirads" href="https://grxhmxrt.github.io/US-LIRADS/">
+      <div class="card-top">
+        <div class="card-icon">🟠</div>
+        <span class="card-badge">LI-RADS</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">LI-RADS</div>
+        <div class="card-desc">Liver Imaging Reporting and Data System · <strong>Hepatocellular Carcinoma (HCC)</strong> risk assessment</div>
+      </div>
+      <div class="card-action">Start LI-RADS Report <span class="card-arrow">→</span></div>
+    </a>
+
+    <a class="report-card tirads" href="https://grxhmxrt.github.io/US-TIRADS/">
+      <div class="card-top">
+        <div class="card-icon">🔵</div>
+        <span class="card-badge">TI-RADS</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">TI-RADS</div>
+        <div class="card-desc">Thyroid Imaging Reporting and Data System · <strong>Thyroid Nodule</strong> risk stratification</div>
+      </div>
+      <div class="card-action">Start TI-RADS Report <span class="card-arrow">→</span></div>
+    </a>
+
+    <a class="report-card birads" href="https://grxhmxrt.github.io/bta-u/">
+      <div class="card-top">
+        <div class="card-icon">🟢</div>
+        <span class="card-badge">BTA U</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">BTA U-Classification</div>
+        <div class="card-desc">British Thyroid Association Ultrasound Classification · <strong>Thyroid Nodule</strong> risk stratification</div>
+      </div>
+      <div class="card-action">Start BTA U Report <span class="card-arrow">→</span></div>
+    </a>
+
+    <a class="report-card pirads disabled" href="#">
+      <div class="card-top">
+        <div class="card-icon">🟣</div>
+        <span class="card-badge">PI-RADS</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">PI-RADS</div>
+        <div class="card-desc">Prostate Imaging Reporting and Data System · <strong>Prostate MRI</strong> reporting</div>
+      </div>
+      <div class="card-action">Coming soon <span class="card-arrow">→</span></div>
+    </a>
+
+    <a class="report-card general" href="https://grxhmxrt.github.io/sonosphere/general.html">
+      <div class="card-top">
+        <div class="card-icon">🟡</div>
+        <span class="card-badge">GENERAL</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">General Ultrasound</div>
+        <div class="card-desc">Abdominal · Pelvic · Renal · Vascular · Soft Tissue</div>
+      </div>
+      <div class="card-action">Start General Report <span class="card-arrow">→</span></div>
+    </a>
+
+    <a class="report-card reports" href="https://grxhmxrt.github.io/sonosphere/reports.html">
+      <div class="card-top">
+        <div class="card-icon">📋</div>
+        <span class="card-badge">ARCHIVE</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">All Reports</div>
+        <div class="card-desc">View, search, and manage all previous sonographic reports</div>
+      </div>
+      <div class="card-action">View All Reports <span class="card-arrow">→</span></div>
+    </a>
+
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2026 SonoSphere (Graham Martin) · Structured Ultrasound Reporting Platform</p>
+  <p>Designed for efficient, standardised, and reproducible sonographic reporting</p>
+</footer>
+
+<script>
+  const d = new Date();
+  const opts = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+  document.getElementById('header-date').textContent = d.toLocaleDateString('en-GB', opts);
+</script>
+
 </body>
 </html>
