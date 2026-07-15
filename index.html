@@ -25,7 +25,7 @@
     --c-birads:  #34d399;
     --c-pirads:  #a78bfa;
     --c-general: #fbbf24;
-    --c-reports: #7a85a0;
+    --c-cwb: #22d3ee;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -186,7 +186,7 @@
   .report-card.birads  { border-left-color: var(--c-birads);  }
   .report-card.pirads  { border-left-color: var(--c-pirads);  }
   .report-card.general { border-left-color: var(--c-general); }
-  .report-card.reports { border-left-color: var(--c-reports); border-left-color: var(--border); }
+  .report-card.cwb     { border-left-color: var(--c-cwb); }
 
   .report-card.disabled {
     opacity: 0.45;
@@ -217,7 +217,7 @@
   .report-card.birads  .card-icon { background: rgba(52,211,153,0.12);  }
   .report-card.pirads  .card-icon { background: rgba(167,139,250,0.12); }
   .report-card.general .card-icon { background: rgba(251,191,36,0.12);  }
-  .report-card.reports .card-icon { background: rgba(122,133,160,0.12); }
+  .report-card.cwb     .card-icon { background: rgba(34,211,238,0.12); }
 
   .card-badge {
     font-family: var(--font-mono);
@@ -234,7 +234,7 @@
   .report-card.birads  .card-badge { color: var(--c-birads);  background: rgba(52,211,153,0.12);  }
   .report-card.pirads  .card-badge { color: var(--c-pirads);  background: rgba(167,139,250,0.12); }
   .report-card.general .card-badge { color: var(--c-general); background: rgba(251,191,36,0.12);  }
-  .report-card.reports .card-badge { color: var(--text-muted); background: rgba(122,133,160,0.12); }
+  .report-card.cwb     .card-badge { color: var(--c-cwb);      background: rgba(34,211,238,0.12); }
 
   .card-body {}
 
@@ -266,7 +266,7 @@
   .report-card.birads  .card-action { color: var(--c-birads);  }
   .report-card.pirads  .card-action { color: var(--c-pirads);  }
   .report-card.general .card-action { color: var(--c-general); }
-  .report-card.reports .card-action { color: var(--text-muted); }
+  .report-card.cwb     .card-action { color: var(--c-cwb); }
 
   .card-arrow {
     transition: transform 0.15s;
@@ -347,7 +347,7 @@
       <div class="card-action">Start LI-RADS Report <span class="card-arrow">→</span></div>
     </a>
 
-    <a class="report-card tirads" href="https://grxhmxrt.github.io/us-tirads/">
+    <a class="report-card tirads" href="https://grxhmxrt.github.io/US-TIRADS/">
       <div class="card-top">
         <div class="card-icon">🔵</div>
         <span class="card-badge">TI-RADS</span>
@@ -395,16 +395,16 @@
       <div class="card-action">Start General Report <span class="card-arrow">→</span></div>
     </a>
 
-    <a class="report-card reports" href="https://grxhmxrt.github.io/sonosphere/reports.html">
+    <a class="report-card cwb" href="https://grxhmxrt.github.io/cwb/">
       <div class="card-top">
-        <div class="card-icon">📋</div>
-        <span class="card-badge">ARCHIVE</span>
+        <div class="card-icon">🖥️</div>
+        <span class="card-badge">WHITEBOARD</span>
       </div>
       <div class="card-body">
-        <div class="card-title">All Reports</div>
-        <div class="card-desc">View, search, and manage all previous sonographic reports</div>
+        <div class="card-title">Clinical Whiteboard</div>
+        <div class="card-desc">Live measurement display · Enter and compare <strong>ultrasound measurements</strong> across scanning sessions</div>
       </div>
-      <div class="card-action">View All Reports <span class="card-arrow">→</span></div>
+      <div class="card-action">Open Whiteboard <span class="card-arrow">→</span></div>
     </a>
 
   </div>
